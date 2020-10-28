@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="LSDT">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/build/jar/LSDT.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
