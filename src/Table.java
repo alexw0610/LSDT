@@ -202,6 +202,7 @@ public class Table{
 				ret += row+"\n";
 				
 			}
+			dataIn.close();
 			return ret;
 		}catch(IOException e){
 			System.err.println("Error creating database file for Table \""+name+"\"");
@@ -266,6 +267,21 @@ public class Table{
 		return ret;
 		
 		
+	}
+
+	public String deleteTable(){
+		File datafile = new File("./"+this.name+".adb");
+		String result = "";
+		if(datafile.delete()){
+			result = "Successfully deleted "+this.name+".adb!";
+		}else{
+			if(datafile.exists()){
+				result = "Error deleting table "+this.name+".adb!";
+			}else{
+				result = "Error deleting table "+this.name+".adb. The file was not found!";
+			}
+		}
+		return result;
 	}
 	
 	

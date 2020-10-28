@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class LSDT{
 	
-	private static Table[] loadedTables = new Table[0];
+	public static Table[] loadedTables = new Table[0];
 
 	public static void main(String[] args){
 		System.out.println("Lightweight SQL-like Data Tool");
@@ -36,25 +36,13 @@ public class LSDT{
 		String input = "";
 		while(!input.equals("q")){
 			input = consolein.readLine();
-			
-			
+
 			if(input.equals("close")|| input.equals("q")){
-				
-				
+
 				System.out.println("Closing");
 				System.exit(1);
-				
-				
-			}else if(input.equals("lt")){
-				
-				
-				loadTables();
-				System.out.println(listTables());
-				//out.writeUTF(listTables());
-				
-				
-				
-			}else if(input.startsWith("it")){
+
+			}else if(input.startsWith("it")){ //MOVE TO PROTOCOL
 				
 				
 				loadTables();
@@ -74,24 +62,14 @@ public class LSDT{
 				}else{
 					System.err.println("incomplete command");
 				}
-				
-				
 			}else{
-				
-				
 				System.out.println(Protocol.getInstance().parseInput(input));
-				
-				
 			}
 		}
 		}catch(IOException e){
 			System.err.println("Error creating Server");
 		}
-			
-			
-		
-		
-		
+
 	}
 	
 	private static void createIndexFile(){
@@ -102,7 +80,8 @@ public class LSDT{
 			System.err.println("Error creating index file");
 		}
 	}
-	private static String listTables(){
+
+	public static String listTables(){
 		String result = "";
 		for(int i = 0; i < loadedTables.length; i++){
 			result += loadedTables[i].printTable();
@@ -110,11 +89,12 @@ public class LSDT{
 		return result;
 	}
 	
-	private static void loadTables(){
+	public static void loadTables(){
 		
 		try{
 			File indexfile = new File("./index.adb");
 			indexfile.createNewFile();
+
 			if(indexfile.exists()){
 				FileInputStream in = new FileInputStream(indexfile);
 				int max = in.available();
@@ -123,8 +103,8 @@ public class LSDT{
 				String content = "";
 				while((data = in.read())!= -1){
 					content = content + (char)data;
-				
 				}
+				in.close();
 		
 				String[] tables = content.split(";");
 				loadedTables = new Table[tables.length];
@@ -156,7 +136,67 @@ public class LSDT{
 		}
 		
 	}
-		
+
+	public static String deleteTable(Table table){
+
+		try{
+			File indexfile = new File("./index.adb");
+
+			if(indexfile.exists()){
+				FileInputStream in = new FileInputStream(indexfile);
+
+				int data = 0;
+				String content = "";
+				while((data = in.read())!= -1){
+					content = content + (char)data;
+				}
+				in.close();
+
+				//Complicated way of reading from original file
+				//writing it to a .old file as backput
+				//deleting original file
+				//writing new content in original file
+				//this allows a backup of the original file in a platform save way
+				//that circumvents the unsafe renameTo() function
+
+				if(new File("./index.adb.old").exists()){
+					new File("./index.adb.old").delete();
+				}
+				FileOutputStream indexOldOut = new FileOutputStream("./index.adb.old",true);
+				indexOldOut.write(content.getBytes());
+				indexOldOut.close();
+				if(!new File("./index.adb").delete()){
+					return "Error deleting table. Cannot modify ./index.adb. Is the file opened?";
+				}
+
+				String[] tables = content.split(";");
+				File newIndexfile = new File("./index.adb");
+				newIndexfile.createNewFile();
+				FileOutputStream indexout = new FileOutputStream("./index.adb",true);
+				for(int i = 0; i < tables.length; i++){
+					String tableName = tables[i].split(",")[0];
+					if(!tableName.equals(table.name)){
+						indexout.write(tables[i].getBytes());
+					}
+
+				}
+				indexout.close();
+				return "Successfully removed table ["+table.name+"] from index file \n"+
+						"Saved old indexfile to index.adb.old as a backup\n"+
+						"WARNING: this backup gets overwritten each time a table is dropped!";
+
+			}else{
+				return "Error, index file not found!";
+			}
+
+
+		}catch(IOException e){
+			System.err.println("Error deleting Table");
+		}
+
+		return "Successfully, removed table ["+table.name+"] from the index file. \n"+
+				"old index file renamed to index.adb.old";
+	}
 
 }
 
