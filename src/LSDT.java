@@ -105,12 +105,15 @@ public class LSDT{
 					content = content + (char)data;
 				}
 				in.close();
-		
+				if(content.isEmpty()){
+					System.out.println("No tables found!");
+					return;
+				}
 				String[] tables = content.split(";");
 				loadedTables = new Table[tables.length];
-			
-				for(int i = 0; i<tables.length;i++){
-				
+				System.out.println("Total tables found: "+loadedTables.length);
+				for(int i = 0; i<loadedTables.length;i++){
+
 					String[] columns = tables[i].split(",");
 					int[] offsets = new int[columns.length-1];
 					String[] names = new String[columns.length-1];;
