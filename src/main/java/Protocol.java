@@ -5,6 +5,7 @@ public class Protocol{
 	private final static Protocol instance = new Protocol();
 	private static final Pattern createRegex = Pattern.compile("(nt)\\s[a-zA-Z]+\\([a-z]+(\\([0-9]+\\))?\\s[a-zA-Z]+(\\,[a-z]+(\\([0-9]+\\))?\\s[a-zA-Z]+)*\\)");
 	private static final Pattern deleteRegex = Pattern.compile("(dt)\\s[a-zA-Z]+");
+	private static final Pattern insertRegex = Pattern.compile("(it)\\s[a-zA-Z](\\s[a-zA-Z])+");
 	private Protocol(){
 			
 	}
@@ -21,55 +22,79 @@ public class Protocol{
 		}
 		
 		if(input.startsWith("nt")){
-			
+
 			Matcher m = createRegex.matcher(input);
-			boolean b = m.matches();
 			if(m.matches()){
-				return createTable(input);
+				String result = createTable(input);
+				LSDT.instance.loadTables();
+				return result;
 			}else{
 				return "Input not valid: Command doesnt match Regex: "+m.pattern();
 			}
 		
 		}else if(input.startsWith("dt")){
+
 			Matcher m = deleteRegex.matcher(input);
-			boolean b = m.matches();
 			if(m.matches()){
-				return deleteTable(input);
+				String result = deleteTable(input);
+				LSDT.instance.loadTables();
+				return result;
+
 			}else{
 				return "Input not valid: Command doesnt match Regex: "+m.pattern();
 			}
 
 		}else if(input.startsWith("it")){
-			
+
+			Matcher m = insertRegex.matcher(input);
+			if(m.matches()){
+				String[] temp = input.split("\\s");
+				Table selected = null;
+
+				for(int i = 0; i< LSDT.instance.loadedTables.length;i++){
+					if(LSDT.instance.loadedTables[i].name.equals(temp[1])){
+						selected = LSDT.instance.loadedTables[i];
+						break;
+					}
+				}
+
+				String query = temp[2];
+				for(int i = 3; i<temp.length;i++){
+					query += ","+temp[i];
+				}
+				String result = selected.insert(query);
+				LSDT.instance.loadTables();
+				return result;
+
+			}else{
+				return "Input not valid: Command doesnt match Regex: "+m.pattern();
+			}
 
 		}else if(input.equals("lt")){
 
-			LSDT.loadTables();
-			return LSDT.listTables();
-			//out.writeUTF(listTables());
-			
+			return LSDT.instance.listTables();
+
 		}
 		
 		return "Input not valid: Unknown command";
-		
-		
-		
-		
+
 	}
+
 	private String deleteTable(String input){
+
 		String[] split = input.split("\\s",2);
 		String tablename = split[1];
-		Table[] loadedTables = LSDT.loadedTables;
+		Table[] loadedTables = LSDT.instance.loadedTables;
 		String result = "";
 		for(Table table : loadedTables){
 			if(tablename.equals(table.name)){
 				result = table.deleteTable();
-				result +="\n"+LSDT.deleteTable(table);
+				result +="\n"+LSDT.instance.deleteTable(table);
 				break;
 			}
 		}
-		LSDT.loadTables();
 		return result;
+
 	}
 	
 	private String createTable(String input){
@@ -113,9 +138,8 @@ public class Protocol{
 				columnTypes[i] = (byte)4;
 
 			}
-			
 		}
-
+		System.out.println(columnOffsets[0]+" in create");
 		Table temp = new Table(tableName,columnOffsets,columnNames,columnTypes);
 		return temp.initTable();
 	}

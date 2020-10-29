@@ -8,7 +8,7 @@ public class Table{
 	private byte[] types;
 	
 	
-	public Table(String name, int[] offsets, String[] names,byte[] types){
+	public Table(String name, int[] offsets, String[] names, byte[] types){
 		this.name = name;
 		this.columnOffsets = offsets;
 		this.columnNames = names;
@@ -44,9 +44,7 @@ public class Table{
 	public String insert(String data){
 		
 		File datafile = new File("./"+name+".adb");
-		
-		
-		
+
 		if(datafile.exists()){
 			
 			try{
@@ -56,8 +54,7 @@ public class Table{
 			
 				for(int i = 0; i < datastring.length && i < types.length; i++){
 					if(types[i] == 1){
-						String temp = datastring[i]; 
-						
+						String temp = datastring[i];
 						while(temp.length() < columnOffsets[i]){
 							temp+="~";
 						}
@@ -147,6 +144,7 @@ public class Table{
 		try{
 			FileInputStream dataIn = new FileInputStream(datafile);
 			int rowLength = 0;
+			System.out.println(this.columnOffsets.length+" "+this.name+" "+this.columnOffsets[0]);
 			for(int i = 0; i < this.columnOffsets.length; i++){
 				rowLength += this.columnOffsets[i];
 			}

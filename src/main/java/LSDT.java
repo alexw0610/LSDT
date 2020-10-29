@@ -3,76 +3,76 @@ import java.net.*;
 import java.util.Scanner;
 
 public class LSDT{
-	
-	public static Table[] loadedTables = new Table[0];
 
-	public static void main(String[] args){
+	public final static LSDT instance = new LSDT();
+	public Table[] loadedTables = new Table[0];
+
+	private LSDT(){
+
 		System.out.println("Lightweight SQL-like Data Tool");
 		File indexfile = new File("./index.adb");
 		if(!indexfile.exists()){
 			createIndexFile();
 		}
-		
+
 		loadTables();
-		try{
-			
-			
+
+	}
+
+	private void serverLoop(){
+		System.out.println("Started Server!");
+		//TODO: add server implementation
+
 		//Socket socket;
 		//ServerSocket server = new ServerSocket(120);
 		//DataInputStream in;
 		//DataOutputStream out;
-		
+
 		//socket = server.accept();
-		
+
 		//System.out.println("Client connected");
-		
+
 		//in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
 		//out = new DataOutputStream(socket.getOutputStream());
-		
-		
-		
-		BufferedReader consolein = new BufferedReader(new InputStreamReader(System.in));   
-		
-		String input = "";
-		while(!input.equals("q")){
-			input = consolein.readLine();
+	}
 
-			if(input.equals("close")|| input.equals("q")){
+	private void consoleLoop(){
 
-				System.out.println("Closing");
-				System.exit(1);
+		try{
+			BufferedReader consolein = new BufferedReader(new InputStreamReader(System.in));
+			String input = "";
 
-			}else if(input.startsWith("it")){ //MOVE TO PROTOCOL
-				
-				
-				loadTables();
-				String[] temp = input.split("\\s");
-				if(temp.length > 2){
-					Table selected = null;
-					for(int i = 0; i< loadedTables.length;i++){
-						if(loadedTables[i].name.equals(temp[1])){
-							selected = loadedTables[i];
-						}
-					}
-					String query = temp[2];
-					for(int i = 3; i<temp.length;i++){
-						query += ","+temp[i];
-					}
-					System.out.println(selected.insert(query));	
+			while(true){
+				input = consolein.readLine();
+
+				if(input.equals("close")|| input.equals("q")){
+
+					System.out.println("Closing");
+					System.exit(1);
+
 				}else{
-					System.err.println("incomplete command");
+					System.out.println(Protocol.getInstance().parseInput(input));
 				}
-			}else{
-				System.out.println(Protocol.getInstance().parseInput(input));
 			}
-		}
 		}catch(IOException e){
 			System.err.println("Error creating Server");
 		}
 
 	}
+
+	public static void main(String[] args){
+
+		if(args.length > 0){
+			if(args[0].equals("-server")){
+				LSDT.instance.serverLoop();
+			}else{
+				System.err.println("Unknown argument!");
+			}
+		}
+		LSDT.instance.consoleLoop();
+	}
 	
-	private static void createIndexFile(){
+	private void createIndexFile(){
 		try{
 			FileOutputStream out = new FileOutputStream("./index.adb");
 			out.close();	
@@ -81,15 +81,18 @@ public class LSDT{
 		}
 	}
 
-	public static String listTables(){
-		String result = "";
+	public String listTables(){
+		String result = "No tables found!";
+		if(loadedTables.length>0){
+			result ="";
+		}
 		for(int i = 0; i < loadedTables.length; i++){
 			result += loadedTables[i].printTable();
 		}
 		return result;
 	}
 	
-	public static void loadTables(){
+	public void loadTables(){
 		
 		try{
 			File indexfile = new File("./index.adb");
@@ -140,7 +143,7 @@ public class LSDT{
 		
 	}
 
-	public static String deleteTable(Table table){
+	public String deleteTable(Table table){
 
 		try{
 			File indexfile = new File("./index.adb");

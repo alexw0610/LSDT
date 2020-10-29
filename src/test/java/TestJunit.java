@@ -16,7 +16,6 @@ public class TestJunit {
 
 
     }
-
     @Test
     public void test(){
         String goal = "Junit";
