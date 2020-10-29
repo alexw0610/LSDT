@@ -9,7 +9,7 @@ public class LSDT{
 
 	private LSDT(){
 
-		System.out.println("Lightweight SQL-like Data Tool");
+		System.out.println("Lightweight SQL-like Database");
 		File indexfile = new File("./index.adb");
 		if(!indexfile.exists()){
 			createIndexFile();
@@ -19,7 +19,7 @@ public class LSDT{
 
 	}
 
-	private void serverLoop(){
+	public void serverLoop(){
 		System.out.println("Started Server!");
 		//TODO: add server implementation
 
@@ -36,7 +36,7 @@ public class LSDT{
 		//out = new DataOutputStream(socket.getOutputStream());
 	}
 
-	private void consoleLoop(){
+	public void consoleLoop(){
 
 		try{
 			BufferedReader consolein = new BufferedReader(new InputStreamReader(System.in));
