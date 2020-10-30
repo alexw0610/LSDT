@@ -6,6 +6,7 @@ public class Protocol{
 	public static final Pattern createRegex = Pattern.compile("(nt)\\s[a-zA-Z]+\\([a-z]+(\\([0-9]+\\))?\\s[a-zA-Z]+(\\,[a-z]+(\\([0-9]+\\))?\\s[a-zA-Z]+)*\\)");
 	public static final Pattern deleteRegex = Pattern.compile("(dt)\\s[a-zA-Z]+");
 	public static final Pattern insertRegex = Pattern.compile("(it)\\s[a-zA-Z](\\s[a-zA-Z])+");
+
 	private Protocol(){
 			
 	}

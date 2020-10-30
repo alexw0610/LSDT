@@ -19,6 +19,11 @@ public class LSDT{
 
 	}
 
+	/**
+	 * The entry point of the DB Server
+	 * @param
+	 * @return
+	 */
 	public void serverLoop(){
 		System.out.println("Started Server!");
 		//TODO: add server implementation
@@ -35,7 +40,11 @@ public class LSDT{
 		//in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
 		//out = new DataOutputStream(socket.getOutputStream());
 	}
-
+	/**
+	 * The entry point of the DB Client
+	 * @param
+	 * @return
+	 */
 	public void consoleLoop(){
 
 		try{
@@ -71,7 +80,10 @@ public class LSDT{
 		}
 		LSDT.instance.consoleLoop();
 	}
-	
+
+	/**
+	 * This method creates a new index.adb file in the current working directory
+	 */
 	private void createIndexFile(){
 		try{
 			FileOutputStream out = new FileOutputStream("./index.adb");
@@ -81,6 +93,9 @@ public class LSDT{
 		}
 	}
 
+	/**
+	 * This method iterates through all loadedTables and prints their content in a table format to the console.
+	 */
 	public String listTables(){
 		String result = "No tables found!";
 		if(loadedTables.length>0){
@@ -91,7 +106,9 @@ public class LSDT{
 		}
 		return result;
 	}
-	
+	/**
+	 * This method loads all Tables into memory (without their content)
+	 */
 	public void loadTables(){
 		
 		try{
@@ -142,7 +159,11 @@ public class LSDT{
 		}
 		
 	}
-
+	/**
+	 * This method deletes a table from the index.adb file
+	 * @param table is the Table object that needs to be deleted
+	 * @return Information about the process as a String
+	 */
 	public String deleteTable(Table table){
 
 		try{
