@@ -5,7 +5,7 @@ public class Protocol{
 	private final static Protocol instance = new Protocol();
 	public static final Pattern createRegex = Pattern.compile("(nt)\\s[a-zA-Z]+\\([a-z]+(\\([0-9]+\\))?\\s[a-zA-Z]+(\\,[a-z]+(\\([0-9]+\\))?\\s[a-zA-Z]+)*\\)");
 	public static final Pattern deleteRegex = Pattern.compile("(dt)\\s[a-zA-Z]+");
-	public static final Pattern insertRegex = Pattern.compile("(it)\\s[a-zA-Z](\\s[a-zA-Z])+");
+	public static final Pattern insertRegex = Pattern.compile("(it)\\s[a-zA-Z]+(\\s[a-zA-Z0-9\\.]+)+");
 	private Protocol(){
 			
 	}
@@ -85,7 +85,7 @@ public class Protocol{
 		String[] split = input.split("\\s",2);
 		String tablename = split[1];
 		Table[] loadedTables = LSDT.instance.loadedTables;
-		String result = "";
+		String result = "Error deleting table ["+tablename+"]. Table does not exist!";
 		for(Table table : loadedTables){
 			if(tablename.equals(table.name)){
 				result = table.deleteTable();
@@ -94,6 +94,20 @@ public class Protocol{
 			}
 		}
 		return result;
+
+	}
+
+	public String deleteAllTables(){
+		LSDT.instance.loadTables();
+		Table[] loadedTables = LSDT.instance.loadedTables;
+
+		int count = 0;
+		for(Table table : loadedTables){
+				count++;
+				table.deleteTable();
+				LSDT.instance.deleteTable(table);
+			}
+		return "Deleted ["+count+"] tables!";
 
 	}
 	
@@ -117,7 +131,6 @@ public class Protocol{
 			if(type.startsWith("char")){
 				
 				String limittemp = type.split("\\(")[1];
-				type = type.split("\\(")[0];
 				limit = Integer.parseInt(limittemp.substring(0,limittemp.length()-1));
 				columnOffsets[i] = 2*limit;
 				columnTypes[i] = (byte)1;
@@ -139,7 +152,6 @@ public class Protocol{
 
 			}
 		}
-		System.out.println(columnOffsets[0]+" in create");
 		Table temp = new Table(tableName,columnOffsets,columnNames,columnTypes);
 		return temp.initTable();
 	}

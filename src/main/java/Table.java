@@ -78,7 +78,7 @@ public class Table{
 			}
 			
 			dataout.close();
-			return "Saved Data to Table";
+			return "Saved Data to Table \""+this.name+"\"!";
 			}catch(IOException e){
 				
 				System.err.println("Error creating database file for Table \""+name+"\"");
