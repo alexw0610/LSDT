@@ -1,6 +1,4 @@
 import java.io.*;
-import java.net.*;
-import java.util.Scanner;
 
 public class LSDT{
 
@@ -17,23 +15,6 @@ public class LSDT{
 
 		loadTables();
 
-	}
-
-	public void serverLoop(){
-		System.out.println("Started Server!");
-		//TODO: add server implementation
-
-		//Socket socket;
-		//ServerSocket server = new ServerSocket(120);
-		//DataInputStream in;
-		//DataOutputStream out;
-
-		//socket = server.accept();
-
-		//System.out.println("Client connected");
-
-		//in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-		//out = new DataOutputStream(socket.getOutputStream());
 	}
 
 	public void consoleLoop(){
@@ -62,14 +43,8 @@ public class LSDT{
 
 	public static void main(String[] args){
 
-		if(args.length > 0){
-			if(args[0].equals("-server")){
-				LSDT.instance.serverLoop();
-			}else{
-				System.err.println("Unknown argument!");
-			}
-		}
 		LSDT.instance.consoleLoop();
+
 	}
 	
 	private void createIndexFile(){
@@ -110,6 +85,7 @@ public class LSDT{
 				in.close();
 				if(content.isEmpty()){
 					System.out.println("No tables found!");
+					loadedTables = new Table[0];
 					return;
 				}
 				String[] tables = content.split(";");
@@ -158,12 +134,6 @@ public class LSDT{
 				}
 				in.close();
 
-				//Complicated way of reading from original file
-				//writing it to a .old file as backput
-				//deleting original file
-				//writing new content in original file
-				//this allows a backup of the original file in a platform save way
-				//that circumvents the unsafe renameTo() function
 
 				if(new File("./index.adb.old").exists()){
 					new File("./index.adb.old").delete();

@@ -3,9 +3,9 @@ import java.nio.ByteBuffer;
 public class Table{
 	
 	public String name;
-	private String[] columnNames;
-	private int[] columnOffsets;
-	private byte[] types;
+	private final String[] columnNames;
+	private final int[] columnOffsets;
+	private final byte[] types;
 	
 	
 	public Table(String name, int[] offsets, String[] names, byte[] types){
@@ -144,7 +144,6 @@ public class Table{
 		try{
 			FileInputStream dataIn = new FileInputStream(datafile);
 			int rowLength = 0;
-			System.out.println(this.columnOffsets.length+" "+this.name+" "+this.columnOffsets[0]);
 			for(int i = 0; i < this.columnOffsets.length; i++){
 				rowLength += this.columnOffsets[i];
 			}
