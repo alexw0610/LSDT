@@ -27,4 +27,4 @@ The currently supported methods include:
 
 ## How can I use it?
 
-Clone the respository and use either maven or ant to compile and build the source files. Try out any of the above commands.
+Clone the respository and use maven to compile and build the source files. Try out any of the above commands.
